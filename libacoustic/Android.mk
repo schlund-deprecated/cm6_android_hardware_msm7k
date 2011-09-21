@@ -1,4 +1,4 @@
-ifeq ($(BUILD_LIB_HTC_ACOUSTIC_WINCE),true)
+ifneq ($(BUILD_TINY_ANDROID),true)
 
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
