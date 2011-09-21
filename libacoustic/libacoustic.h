@@ -69,10 +69,11 @@ struct audio_update_req {
 
 #define ACOUSTIC_UPDATE_ADIE_TABLE              _IOW(ACOUSTIC_IOCTL_MAGIC,  1, struct adie_table* )
 #define ACOUSTIC_UPDATE_VOLUME_TABLE            _IOW(ACOUSTIC_IOCTL_MAGIC,  2, uint16_t* )
-#define ACOUSTIC_UPDATE_CE_TABLE                _IOW(ACOUSTIC_IOCTL_MAGIC,  3, uint16_t* )
-#define ACOUSTIC_UPDATE_AUDIO_PATH_TABLE        _IOW(ACOUSTIC_IOCTL_MAGIC,  4, uint16_t* )
-#define ACOUSTIC_UPDATE_AUDIO_SETTINGS          _IOW(ACOUSTIC_IOCTL_MAGIC,  5, struct audio_update_req* )
-#define ACOUSTIC_UPDATE_HTC_VOC_CAL_CODEC_TABLE _IOW(ACOUSTIC_IOCTL_MAGIC,  6, struct htc_voc_cal_table* )
+#define ACOUSTIC_WB_UPDATE_VOLUME_TABLE         _IOW(ACOUSTIC_IOCTL_MAGIC,  3, uint16_t* )
+#define ACOUSTIC_UPDATE_CE_TABLE                _IOW(ACOUSTIC_IOCTL_MAGIC,  4, uint16_t* )
+#define ACOUSTIC_UPDATE_AUDIO_PATH_TABLE        _IOW(ACOUSTIC_IOCTL_MAGIC,  5, uint16_t* )
+#define ACOUSTIC_UPDATE_AUDIO_SETTINGS          _IOW(ACOUSTIC_IOCTL_MAGIC,  6, struct audio_update_req* )
+#define ACOUSTIC_UPDATE_HTC_VOC_CAL_CODEC_TABLE _IOW(ACOUSTIC_IOCTL_MAGIC,  7, struct htc_voc_cal_table* )
 #define ACOUSTIC_GET_CAPABILITIES               _IOW(ACOUSTIC_IOCTL_MAGIC,  8, struct msm_acoustic_capabilities* )
 
 #define ACOUSTIC_SET_HW_AUDIO_PATH          _IOW(ACOUSTIC_IOCTL_MAGIC,  10, struct msm_audio_path* )

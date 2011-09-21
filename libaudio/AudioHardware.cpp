@@ -16,7 +16,7 @@
 
 #include <math.h>
 
-//#define LOG_NDEBUG 0
+#define LOG_NDEBUG 0
 #define LOG_TAG "AudioHardwareMSM72XX_wince"
 #include <utils/Log.h>
 #include <utils/String8.h>
@@ -40,7 +40,7 @@ extern "C" {
 #define AUDIENCE_A1010_DEV      "/dev/audience_A1010"
 }
 
-#define LOG_SND_RPC 0  // Set to 1 to log sound RPC's
+#define LOG_SND_RPC 1  // Set to 1 to log sound RPC's
 
 namespace android {
 static int audpre_index, tx_iir_index;
@@ -771,10 +771,10 @@ status_t AudioHardware::doAcousticAudioDeviceChange(struct msm_snd_device_config
     } else {
         inputDevice = input->devices();
         if (inputDevice & AudioSystem::DEVICE_IN_ALL) {
-			LOGI("enabling mic recording");
+						LOGI("enabling mic recording");
             args->mic_mute = false;  
         } else {
-			LOGI("disabling mic recording");
+						LOGI("disabling mic recording");
             args->mic_mute = true;
         }
     }

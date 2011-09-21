@@ -80,7 +80,7 @@ struct d_table_s {
 struct fg_table_s {
     union {
         struct fg_table_st table;
-        uint16_t array[0xA0];
+        uint16_t array[0x19A];
     };
 };
 
@@ -102,6 +102,8 @@ static struct au_table_s*    Audio_Path_Uplink_Table = NULL;       /* u_table ('
 static uint8_t APUT_max_index  = 0;
 static struct fg_table_s*    Phone_Acoustic_Table = NULL;          /* f_table ('F' + 'B') */
 static uint8_t PAT_max_index   = 0;
+static struct fg_table_s*    WB_Phone_Acoustic_Table = NULL;       /* w_table ('W') */
+static uint8_t WBPAT_max_index   = 0;
 static struct fg_table_s*    BT_Phone_Acoustic_Table = NULL;       /* g_table ('E' + 'G') */
 static uint8_t BTPAT_max_index = 0;
 static struct d_table_s*     HTC_VOC_CAL_CODEC_TABLE_Table = NULL; /* d_table ('D') */
@@ -420,6 +422,20 @@ static int ParseAudioParaLine(char* line, int len)
                 Phone_Acoustic_Table[table_num].array[field_count++] = strtol(token, &ps, 16);
             };
             break;
+			
+        case 'W':
+            table_num = strtol(token + 1, &ps, 10);
+            if ( table_num > 99) {
+                return -EINVAL;
+            }
+            if ( WBPAT_max_index < (table_num+1) ) WBPAT_max_index = table_num+1;
+            //LOGV("WB_Phone Acoustic Table: %d\n", table_num);
+            /* Skip the mode name string field */
+            strtok(NULL, ",");
+            while ( (token = strtok(NULL, ",")) ) {
+                WB_Phone_Acoustic_Table[table_num].array[field_count++] = strtol(token, &ps, 16);
+            };
+            break;
 
         case 'C':
             table_num = strtol(token + 1, &ps, 10);
@@ -576,6 +592,14 @@ static int ReadAudioParaFromFile(void)
             return -1;
         }
     }
+	
+    if ( WB_Phone_Acoustic_Table == NULL ) {
+        WB_Phone_Acoustic_Table = (struct fg_table_s*) malloc(100 * sizeof(struct fg_table_s) ); // 0x3C00
+        if (WB_Phone_Acoustic_Table == NULL) {
+            LOGE("Failed to malloc WB_Phone_Acoustic_Table\n");
+            return -1;
+        }
+    }
 
     if ( BT_Phone_Acoustic_Table == NULL ) {
         BT_Phone_Acoustic_Table = (struct fg_table_s*) malloc(100 * sizeof(struct fg_table_s) );  // 0x7800
@@ -624,6 +648,7 @@ static int ReadAudioParaFromFile(void)
     LOGI("%d Audio_Path_Table entries", APT_max_index);
     LOGI("%d Audio_Path_Uplink_Table entries", APUT_max_index);
     LOGI("%d Phone_Acoustic_Table entries", PAT_max_index);
+	LOGI("%d WB_Phone_Acoustic_Table entries", WBPAT_max_index);
     LOGI("%d BT_Phone_Acoustic_Table entries", BTPAT_max_index);
     LOGI("%d HTC_VOC_CAL_CODEC_TABLE_Table entries", HVCCT_max_index);
     LOGI("%d CE_Acoustic_Table entries", CEAT_max_index);
@@ -1198,6 +1223,8 @@ int htc_acoustic_deinit(void)
         free(Audio_Path_Uplink_Table);
     if ( Phone_Acoustic_Table != NULL )
         free(Phone_Acoustic_Table);
+    if ( WB_Phone_Acoustic_Table != NULL )
+        free(WB_Phone_Acoustic_Table);
     if ( BT_Phone_Acoustic_Table != NULL )
         free(BT_Phone_Acoustic_Table);
     if ( HTC_VOC_CAL_CODEC_TABLE_Table != NULL )
@@ -1393,6 +1420,7 @@ int msm72xx_update_audio_method(int method)
 int msm72xx_set_acoustic_table(int device, int volume)
 {
     struct fg_table_s* table = NULL;
+	struct fg_table_s* wb_table = NULL;
     struct c_table_s*  ce_table = NULL;
     int out_path = device;
     int out_path_method = SND_METHOD_VOICE;
@@ -1462,53 +1490,64 @@ int msm72xx_set_acoustic_table(int device, int volume)
         case HANDSFREE:
         case EARCUPLE:
             table = &Phone_Acoustic_Table[(out_path*6) + volume];
+			wb_table = &WB_Phone_Acoustic_Table[(out_path*6) + volume];
         break;
 
         case BTHEADSET:
             table = &Phone_Acoustic_Table[18];
+			wb_table = &WB_Phone_Acoustic_Table[18];
         break;
 
         case CUSTOM_BTHEADSET:
             table = &BT_Phone_Acoustic_Table[device - BT_CUSTOM_DEVICES_ID_OFFSET];
+			wb_table = &BT_Phone_Acoustic_Table[device - BT_CUSTOM_DEVICES_ID_OFFSET];
             out_path = BTHEADSET;
         break;
 
         case CARKIT:
             table = &Phone_Acoustic_Table[19];
+			wb_table = &WB_Phone_Acoustic_Table[19];
         break;
 
         case TTY_FULL:
             table = &Phone_Acoustic_Table[20];
+			wb_table = &WB_Phone_Acoustic_Table[20];
             out_path_method = SND_METHOD_NONE;
         break;
 
         case TTY_VCO:
             table = &Phone_Acoustic_Table[21];
+			wb_table = &WB_Phone_Acoustic_Table[21];
             out_path_method = SND_METHOD_NONE;
         break;
 
         case TTY_HCO:
             table = &Phone_Acoustic_Table[22];
+			wb_table = &WB_Phone_Acoustic_Table[22];
             out_path_method = SND_METHOD_NONE;
         break;
 
         case REC_INC_MIC:
             table = &Phone_Acoustic_Table[23];
+			wb_table = &WB_Phone_Acoustic_Table[23];
             out_path_method = SND_METHOD_AUDIO;
         break;
 
         case REC_EXT_MIC:
             table = &Phone_Acoustic_Table[24];
+			wb_table = &WB_Phone_Acoustic_Table[24];
             out_path_method = SND_METHOD_AUDIO;
         break;
 
         case PLAYBACK_HEADSET:
             table = &Phone_Acoustic_Table[25];
+			wb_table = &WB_Phone_Acoustic_Table[25];
             out_path_method = SND_METHOD_AUDIO;
         break;
 
         case PLAYBACK_HANDSFREE:
             table = &Phone_Acoustic_Table[26];
+			wb_table = &WB_Phone_Acoustic_Table[26];
             out_path_method = SND_METHOD_AUDIO;
         break;
 
@@ -1522,7 +1561,14 @@ int msm72xx_set_acoustic_table(int device, int volume)
             LOGE("ACOUSTIC_UPDATE_VOLUME_TABLE error.");
             return -EIO;
         }
-
+		
+		if ( wb_table ) {
+			if (ioctl(acousticfd, ACOUSTIC_WB_UPDATE_VOLUME_TABLE, &(wb_table->array) ) < 0) {
+				LOGE("ACOUSTIC_UPDATE_WB_VOLUME_TABLE error.");
+				return -EIO;
+			}
+		}
+		
         /* TODO : Look at UpdateCeTable from CE dll
          * TODO : Is it really usefull as the table for all devices is filled with 0's
          */
