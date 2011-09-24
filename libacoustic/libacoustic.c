@@ -73,7 +73,7 @@ struct be_table_s {
 struct d_table_s {
     union {
         struct d_table_st table;
-        uint16_t array[0xB];
+        uint16_t array[0x11];
     };
 };
 
@@ -661,7 +661,7 @@ static int ReadAudioParaFromFile(void)
      * Note that this is the only one field size that varies between those devices.
      * All other field types are same size.
      */
-    if ( device_capabilities.htc_voc_cal_fields_per_param > 0xB ) {
+    if ( device_capabilities.htc_voc_cal_fields_per_param < 0x11 ) {
         int field;
         uint16_t* htc_voc_cal_tbl_conv_field;
         /* Convert table to required field size */
