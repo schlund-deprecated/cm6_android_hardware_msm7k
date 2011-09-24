@@ -661,7 +661,7 @@ static int ReadAudioParaFromFile(void)
      * Note that this is the only one field size that varies between those devices.
      * All other field types are same size.
      */
-    if ( device_capabilities.htc_voc_cal_fields_per_param < 0xB ) {
+    if ( device_capabilities.htc_voc_cal_fields_per_param > 0xB ) {
         int field;
         uint16_t* htc_voc_cal_tbl_conv_field;
         /* Convert table to required field size */
