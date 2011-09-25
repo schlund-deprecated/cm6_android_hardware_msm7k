@@ -80,7 +80,7 @@ struct d_table_s {
 struct fg_table_s {
     union {
         struct fg_table_st table;
-        uint16_t array[0xA0];
+        uint16_t array[0xCD];
     };
 };
 
