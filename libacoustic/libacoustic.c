@@ -1051,6 +1051,7 @@ static int check_and_set_audpp_parameters(char *buf, int size)
                 goto token_err;
 
             eq_cal(eq[i].gain, eq[i].freq, 48000, eq[i].type, eq[i].qf, (int32_t*)numerator, (int32_t *)denominator, shift);
+				LOGI("EQ_GAIN=%02x. EQ_FREQ=%02x. EQ_TYPE=%02x. EQ_QF=%02x.", eq[i].gain, eq[i].freq, eq[i].type, eq[i].qf);
             for (j = 0; j < 6; j++) {
                 eqalizer[0].params[ ( i * 6) + j] = numerator[j];
             }

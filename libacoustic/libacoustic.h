@@ -255,6 +255,8 @@ struct register_table_s {
 struct fg_table_st {
     char     name[MAX_MODE_NAME_LENGTH];
     uint16_t volume_level;
+	uint16_t voc_ec_esec;
+	uint16_t voc_ec_ver_ecns;
     uint16_t codecTxGain;
     uint16_t codecRxGain;
     uint16_t codecSTGain;
@@ -327,27 +329,38 @@ struct fg_table_st {
     uint16_t rxPcmFiltCoeff[7];
     uint16_t txPcmFiltEnableFlag;
     uint16_t txPcmFiltCoeff[7];
-    uint16_t rxiirFiltNumCoeff[18];
-    uint16_t rxiirFiltDenCoeff[12];
-    uint16_t rxiirFiltNumShiftFactor[4];
-    uint16_t txiirFiltNumCoeff[18];
-    uint16_t txiirFiltDenCoeff[12];
-    uint16_t txiirFiltNumShiftFactor[4];
-    uint16_t ecparameterupdated;
+	uint16_t rxIIRFiltEnableFlag;
+	uint16_t rxiir_stage_cnt;
+	uint16_t RxIIRFilterStage[50];
+    uint16_t rxiirFiltNumShiftFactor[5];
+	uint16_t txIIRFiltEnableFlag;
+	uint16_t txiir_stage_cnt;
+	uint16_t TxIIRFilterStage[50];
+	uint16_t txiirFiltNumShiftFactor[5];
+	uint16_t ecparameterupdated;
+	uint16_t QDSP_afeTxVol;
+	uint16_t QDSP_afeRxVol;
+	uint16_t QDSP_afeTxBufOffset;
 };
 
 struct d_table_st {
-    uint16_t routing_mode_config;
-    uint16_t internal_codec_config;
-    uint16_t external_codec_config;
-    uint16_t pcm_ctrl;
-    uint16_t codec_intf_ctrl;
-    uint16_t dma_path_ctrl;
+    uint16_t dma_enable;
+    uint16_t dma5_config;
+    uint16_t dma4_config;
+	uint16_t dma1_config;
+	uint16_t dma0_config;
+	uint16_t rounting_setup_to_voice;
+	uint16_t rounting_setup_to_audio;
+	uint16_t rounting_setup_to_dma5;
+	uint16_t rounting_setup_to_dma1;
+	uint16_t voice_config;
+	uint16_t internal_codec_config;
+	uint16_t num_chnls_info;
     uint16_t eight_khz_int_mode;
-    uint16_t rx_codec_stereo_config;
-    uint16_t tx_codec_stereo_config;
-    uint16_t ECNS;
-    uint16_t unk0;
+    uint16_t dma_path_ctrl;
+	uint16_t external_codec_config;
+	uint16_t pcm_ctrl;
+    uint16_t codec_intf_ctrl;
 };
 
 struct be_table_st {
@@ -396,8 +409,8 @@ struct be_table_st {
     uint16_t nsMinGain;
     uint16_t nsSlope;
     uint16_t nsSNRThreshold;
-    uint16_t rxPcmFiltCoeff[6];
-    uint16_t txPcmFiltCoeff[6];
+    uint16_t rxPcmFiltCoeff[7];
+    uint16_t txPcmFiltCoeff[7];
     uint16_t ec_reset_flag;
     uint16_t Reserved[5];
     uint16_t MCC_Val;
