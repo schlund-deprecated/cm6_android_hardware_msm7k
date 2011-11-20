@@ -792,7 +792,7 @@ status_t AudioHardware::doAcousticAudioDeviceChange(struct msm_snd_device_config
     }
  
     /* Do not use SND_DEVICE_CURRENT */
-    if ( args->device == (unsigned int)SND_DEVICE_CURRENT ) {
+    if ( args->device == (unsigned int)SND_DEVICE_CURRENT && mCurSndDevice != -1) {
 		LOGI("patching device to mCurSndDevice(%d)", mCurSndDevice);
         args->device = mCurSndDevice;
     }
@@ -810,7 +810,7 @@ status_t AudioHardware::doAcousticAudioDeviceChange(struct msm_snd_device_config
 		bool rear_mic = inputDevice & AudioSystem::DEVICE_IN_BACK_MIC;
 		bool use_spk = ((int)args->device) == SND_DEVICE_SPEAKER;
 
-		if ((in_call || use_mic || rear_mic) && use_spk) {
+		if ((in_call || use_mic || rear_mic) && use_spk && support_a1010) {
             msm72xx_set_audio_path(!args->mic_mute, 1, args->device, bEnableOut );
             mCurSndDevice = SND_DEVICE_SPEAKER_MIC;
 			args->device = SND_DEVICE_SPEAKER_MIC;
